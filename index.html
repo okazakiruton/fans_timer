@@ -808,12 +808,13 @@ document.getElementById('connectBtn').addEventListener('click', ()=>{
   updateLastReceivedLabel();
   ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
+  let joined = false;
+
   ws.onopen = ()=>{
     const anon = 'justinfan' + Math.floor(10000 + Math.random()*89999);
     ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
     ws.send('PASS SCHMOOPIIE');
     ws.send('NICK ' + anon);
-    ws.send('JOIN #' + channel);
     pingIntervalId = setInterval(()=>{ if(ws && ws.readyState===1) ws.send('PING :keepalive'); }, 4*60*1000);
   };
 
@@ -825,8 +826,14 @@ document.getElementById('connectBtn').addEventListener('click', ()=>{
         ws.send('PONG :tmi.twitch.tv');
         continue;
       }
-      if(line.includes('376') || line.includes('Welcome')){
+      if((line.includes('376') || line.includes('Welcome')) && !joined){
+        // registration is confirmed complete now — safe to JOIN
+        joined = true;
+        ws.send('JOIN #' + channel);
         setStatus('#'+channel+' に接続しました（コメント待機中）', 'ok');
+      }
+      if(line.includes('JOIN') && line.includes('#'+channel)){
+        setStatus('#'+channel+' に参加しました（コメント待機中）', 'ok');
       }
       if(line.includes('PRIVMSG')){
         const parsed = parseIrcMessage(line);
