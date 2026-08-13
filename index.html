@@ -97,6 +97,15 @@
     opacity:0;
     transition:opacity .04s steps(1);
   }
+  .sideobj img.show{
+    opacity:1;
+    animation: sideobj-pop .3s ease-out;
+  }
+  @keyframes sideobj-pop{
+    0%{ transform: scale(0.4); }
+    60%{ transform: scale(1.15); }
+    100%{ transform: scale(1); }
+  }
   .obs-toggle{
     position:fixed;
     top:8px; left:8px;
@@ -178,26 +187,28 @@
   }
   .timer-ring{
     position:absolute;
-    top:6px; right:8px;
-    width:15%;
+    top:5px; right:5px;
+    width:30%;
     aspect-ratio:1/1;
     z-index:40;
   }
   .timer-ring svg{
     width:100%; height:100%;
     transform: rotate(-90deg);
+    overflow: visible;
   }
   .timer-ring circle{
     fill:none;
-    stroke-width:4;
+    stroke-width:5;
   }
-  .ring-bg{ stroke: rgba(75,107,63,.25); }
+  .ring-bg{ stroke: rgba(27,24,18,.35); }
   .ring-fg{
-    stroke: var(--lcd-line);
+    stroke: #1b1812;
     stroke-linecap: round;
     stroke-dasharray: 106.8;
     stroke-dashoffset: 0;
     transition: stroke-dashoffset 1s linear;
+    filter: drop-shadow(0 0 1.5px rgba(255,255,255,.6));
   }
   .ring-label{
     position:absolute;
@@ -205,9 +216,11 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:6px;
-    color:var(--lcd-line);
-    font-weight:700;
+    font-size:11px;
+    font-weight:800;
+    color:#1b1812;
+    text-shadow: 0 0 3px rgba(255,255,255,.9), 0 0 3px rgba(255,255,255,.9);
+    letter-spacing:-.02em;
   }
   .stagebar{
     display:flex;
@@ -380,6 +393,7 @@
     <button class="send" id="connectBtn">接続</button>
   </div>
   <div class="conn-status" id="connStatus">未接続</div>
+  <div class="conn-status" id="lastReceived">最終コメント受信: まだなし</div>
 </div>
 
 <div class="panel">
@@ -545,7 +559,7 @@ const REACTIONS = [
   { id:'special', label:'特殊演出', keywords:['おめでとう','ギフト','gift','sub','サブスク','登録した','フォローした'], minStage:'adult', pausesIdle:false,
     play: async ()=>{
       showSideOnly(['doll']);
-      await sleep(500);
+      await sleep(900);
       reactionPlaying = true;
       stageEl.style.transform = 'translateX(0)';
       await flashEffect(['effect_sparkle','effect_heart','effect_sparkle2'], 4, 'smile', true);
@@ -744,6 +758,16 @@ document.getElementById('demoBtn').addEventListener('click', ()=>{
 
 // ---- Twitch chat connection (native WebSocket IRC, anonymous read-only) ----
 const connStatus = document.getElementById('connStatus');
+const lastReceivedEl = document.getElementById('lastReceived');
+let lastMessageAt = null;
+function updateLastReceivedLabel(){
+  if(!lastMessageAt){ lastReceivedEl.textContent = '最終コメント受信: まだなし'; return; }
+  const d = new Date(lastMessageAt);
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mm = String(d.getMinutes()).padStart(2,'0');
+  const ss = String(d.getSeconds()).padStart(2,'0');
+  lastReceivedEl.textContent = '最終コメント受信: ' + hh+':'+mm+':'+ss;
+}
 const lastTriggerByUser = {}; // username -> timestamp ms
 const USER_COOLDOWN_MS = 5000;
 let ws = null;
@@ -780,6 +804,8 @@ document.getElementById('connectBtn').addEventListener('click', ()=>{
   if(ws){ try{ ws.close(); }catch(e){} clearInterval(pingIntervalId); }
 
   setStatus('接続中…');
+  lastMessageAt = null;
+  updateLastReceivedLabel();
   ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
   ws.onopen = ()=>{
@@ -794,16 +820,22 @@ document.getElementById('connectBtn').addEventListener('click', ()=>{
   ws.onmessage = (evt)=>{
     const lines = evt.data.split('\r\n').filter(Boolean);
     for(const line of lines){
+      console.log('[twitch-irc]', line); // open DevTools console to see raw traffic for debugging
       if(line.startsWith('PING')){
         ws.send('PONG :tmi.twitch.tv');
         continue;
       }
       if(line.includes('376') || line.includes('Welcome')){
-        setStatus('#'+channel+' に接続しました', 'ok');
+        setStatus('#'+channel+' に接続しました（コメント待機中）', 'ok');
       }
       if(line.includes('PRIVMSG')){
         const parsed = parseIrcMessage(line);
-        if(!parsed) continue;
+        if(!parsed){
+          console.warn('[twitch-irc] PRIVMSG parse failed for line:', line);
+          continue;
+        }
+        lastMessageAt = Date.now();
+        updateLastReceivedLabel();
         const user = parsed.tags['display-name'] || parsed.username;
         const now = Date.now();
         const last = lastTriggerByUser[user] || 0;
