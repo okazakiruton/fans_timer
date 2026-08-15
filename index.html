@@ -5,13 +5,24 @@
 <title>休憩どうぶつ プロトタイプ v2</title>
 <style>
   :root{
-    --lcd-bg: #9bbf7e;
-    --lcd-bg-dark: #7fa868;
-    --lcd-line: #4b6b3f;
-    --shell: #2e2a26;
-    --shell-hi: #45403a;
-    --accent: #ff8a3d;
-    --ink: #f4efe6;
+    --bg: #FFFFFF;
+    --surface: #F7F7F7;
+    --border: #EEEEEE;
+    --primary: #86D2E7;
+    --secondary: #5FC266;
+    --accent: #F49E00;
+    --text: #0A0A0A;
+    --text-secondary: #6B6B6B;
+    --success-bg: #E4F3E2;
+    --success-text: #1F6B2A;
+    --error: #D9534F;
+    /* legacy aliases kept so the rest of the stylesheet keeps working */
+    --lcd-bg: #EAF6FB;
+    --lcd-bg-dark: #EAF6FB;
+    --lcd-line: #0A0A0A;
+    --shell: #FFFFFF;
+    --shell-hi: #FFFFFF;
+    --ink: #0A0A0A;
   }
   *{box-sizing:border-box;}
   body{
@@ -22,40 +33,40 @@
     align-items:center;
     justify-content:center;
     gap:20px;
-    background:radial-gradient(circle at 30% 20%, #3a3530, #17140f 70%);
+    background:var(--surface);
     font-family:'Courier New', monospace;
-    color:var(--ink);
+    color:var(--text);
     padding:32px 16px;
   }
   h1{
     font-size:14px;
     letter-spacing:.08em;
-    color:#c9c2b4;
+    color:var(--text-secondary);
     font-weight:600;
     margin:0;
     text-align:center;
   }
   .device{
     width:280px;
-    background:linear-gradient(160deg, var(--shell-hi), var(--shell));
+    background:var(--bg);
+    border:1px solid var(--border);
     border-radius:34px;
     padding:22px 20px 22px;
-    box-shadow:0 20px 40px rgba(0,0,0,.5), inset 0 2px 0 rgba(255,255,255,.05);
+    box-shadow:0 8px 24px rgba(10,10,10,.08);
     position:relative;
   }
   .screen-frame{
-    background:#1b1812;
+    background:var(--bg);
+    border:1px solid var(--border);
     border-radius:12px;
     padding:10px;
-    box-shadow:inset 0 0 0 2px #060502;
   }
   .screen{
     position:relative;
     width:100%;
     aspect-ratio: 4 / 3;
-    background:
-      repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
-      linear-gradient(160deg, var(--lcd-bg), var(--lcd-bg-dark));
+    background: var(--lcd-bg);
+    border:1px solid var(--border);
     border-radius:4px;
     overflow:hidden;
     display:flex;
@@ -150,23 +161,26 @@
   body.obs-mode .device{
     background:none;
     box-shadow:none;
+    border:none;
     padding:0;
     border-radius:0;
     width:220px;
   }
   body.obs-mode .screen-frame{
     background:none;
+    border:none;
     padding:0;
     box-shadow:none;
   }
   body.obs-mode .screen{
     background:none;
+    border:none;
   }
   .wave{
     position:absolute;
     left:0; right:0; bottom:0;
     height:160%;
-    background: linear-gradient(180deg, rgba(140,195,255,.92), rgba(70,140,220,.92));
+    background: var(--primary);
     clip-path: polygon(
       0% 22%, 4% 16%, 8% 22%, 12% 16%, 16% 22%, 20% 16%, 24% 22%, 28% 16%,
       32% 22%, 36% 16%, 40% 22%, 44% 16%, 48% 22%, 52% 16%, 56% 22%, 60% 16%,
@@ -212,14 +226,13 @@
     fill:none;
     stroke-width:5;
   }
-  .ring-bg{ stroke: rgba(27,24,18,.35); }
+  .ring-bg{ stroke: var(--border); }
   .ring-fg{
-    stroke: #1b1812;
+    stroke: var(--accent);
     stroke-linecap: round;
     stroke-dasharray: 106.8;
     stroke-dashoffset: 0;
     transition: stroke-dashoffset 1s linear;
-    filter: drop-shadow(0 0 1.5px rgba(255,255,255,.6));
   }
   .ring-label{
     position:absolute;
@@ -229,8 +242,7 @@
     justify-content:center;
     font-size:11px;
     font-weight:800;
-    color:#1b1812;
-    text-shadow: 0 0 3px rgba(255,255,255,.9), 0 0 3px rgba(255,255,255,.9);
+    color:var(--text);
     letter-spacing:-.02em;
   }
   .stagebar{
@@ -241,9 +253,9 @@
   }
   .stagebar button{
     flex:1;
-    background:#3a352f;
-    color:#c9c2b4;
-    border:none;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
     border-radius:8px;
     padding:8px 4px;
     font-size:11px;
@@ -252,40 +264,41 @@
   }
   .stagebar button.active{
     background:var(--accent);
-    color:#1b1108;
+    border-color:var(--accent);
+    color:var(--text);
     font-weight:700;
   }
 
   .panel{
     width:280px;
-    background:#211e1a;
+    background:var(--bg);
+    border:1px solid var(--border);
     border-radius:14px;
     padding:16px;
     display:flex;
     flex-direction:column;
     gap:10px;
-    box-shadow:0 10px 24px rgba(0,0,0,.4);
   }
   .panel label{
     font-size:11px;
-    color:#a89e8e;
+    color:var(--text-secondary);
     letter-spacing:.05em;
   }
   .row{display:flex; gap:8px;}
   input[type=text]{
     flex:1;
-    background:#131110;
-    border:1px solid #3a352f;
+    background:var(--bg);
+    border:1px solid var(--border);
     border-radius:8px;
-    color:var(--ink);
+    color:var(--text);
     padding:9px 10px;
     font-size:13px;
     font-family: inherit;
   }
-  input[type=text]:focus{outline:1px solid var(--accent);}
+  input[type=text]:focus{outline:1px solid var(--primary);}
   button.send, button.demo{
     background:var(--accent);
-    color:#1b1108;
+    color:var(--text);
     border:none;
     border-radius:8px;
     padding:9px 14px;
@@ -295,8 +308,9 @@
     cursor:pointer;
   }
   button.demo{
-    background:#3a352f;
-    color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
     width:100%;
   }
   .chips{
@@ -305,9 +319,9 @@
     flex-wrap:wrap;
   }
   .chips button{
-    background:#131110;
-    border:1px solid #3a352f;
-    color:#c9c2b4;
+    background:var(--bg);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
     border-radius:20px;
     padding:5px 10px;
     font-size:10px;
@@ -326,8 +340,9 @@
   }
   .queue span{
     font-size:10px;
-    background:#3a352f;
-    color:#c9c2b4;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
     padding:3px 7px;
     border-radius:6px;
   }
@@ -335,11 +350,11 @@
     max-height:110px;
     overflow-y:auto;
     font-size:11px;
-    color:#8d8578;
+    color:var(--text-secondary);
     display:flex;
     flex-direction:column;
     gap:4px;
-    border-top:1px solid #3a352f;
+    border-top:1px solid var(--border);
     padding-top:8px;
   }
   .log div span.tag{color:var(--accent); font-weight:700;}
@@ -347,17 +362,18 @@
     width:280px;
     font-size:11px;
     line-height:1.6;
-    color:#8d8578;
+    color:var(--text-secondary);
   }
   .conn-status{
     font-size:11px;
     padding:6px 10px;
     border-radius:6px;
-    background:#131110;
-    color:#a89e8e;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
   }
-  .conn-status.ok{ color:#8fd19e; }
-  .conn-status.err{ color:#e08585; }
+  .conn-status.ok{ color:var(--success-text); background:var(--success-bg); border-color:var(--success-bg); }
+  .conn-status.err{ color:var(--error); }
 </style>
 </head>
 <body>
@@ -556,13 +572,13 @@ const REACTIONS = [
     play: async ()=>{ await flashEffect(['effect_bad'], 3); } },
   { id:'angry', label:'怒り', keywords:['怒った','おこった','怒ったよ','なんでだよ','なんでだ','許さん','許さない','ふざけんな','ふざけるな','マジ怒','マジで怒った','ぷんぷん','プンプン','むかつく','ムカつく','腹立つ','はらたつ','イライラ','いらいら','キレた','きれた','切れた','激怒','げきど','おこだよ','おこだぞ','おこだ','おこりんぼ','グヌヌ','ぐぬぬ'], minStage:'egg',
     play: async ()=>{ await flashEffect(['effect_angry'], 3); } },
-  { id:'eat', label:'食べる', keywords:['おなかすいた','お腹すいた','お腹空いた','おなかへった','お腹減った','ごはん','ゴハン','ご飯','おやつ','オヤツ','食べたい','たべたい','ランチ','らんち','昼飯','ひるめし','晩ごはん','ばんごはん','夕飯','ゆうはん','朝ごはん','あさごはん','もぐもぐ','モグモグ','パクパク','ぱくぱく','腹ペコ','はらぺこ','食事','しょくじ','おいしそう','美味しそう','グルメ','ぐるめ'], minStage:'baby', pausesIdle:false,
+  { id:'eat', label:'食べる', keywords:['おなかすいた','お腹すいた','お腹空いた','おなかへった','お腹減った','ごはん','ゴハン','ご飯','おやつ','オヤツ','食べたい','たべたい','ランチ','らんち','昼飯','ひるめし','晩ごはん','ばんごはん','夕飯','ゆうはん','朝ごはん','あさごはん','もぐもぐ','モグモグ','パクパク','ぱくぱく','腹ペコ','はらぺこ','食事','しょくじ','おいしそう','美味しそう','グルメ','ぐるめ','伊勢海老','イセエビ','海老','えび'], minStage:'baby', pausesIdle:false,
     play: async ()=>{ await playSideObject(['ebi','ebi_1','ebi_2'], 260); } },
   { id:'toilet', label:'トイレ', keywords:['トイレ','といれ','トイレット','おしっこ','オシッコ','うんち','ウンチ','wc','WC','Wc','お手洗い','おてあらい','化粧室','けしょうしつ','便所','べんじょ','レストルーム','restroom','小用','しょうよう','大用','トイレ休憩','といれきゅうけい','おトイレ','おといれ','尿意','にょうい','催した','もよおした','トイレタイム'], minStage:'baby', pausesIdle:false,
     play: async ()=>{ await playSideObject(['wc_1'], 1400); await waveTransition(); } },
-  { id:'laugh', label:'笑う', keywords:['w','ｗ','W','Ｗ','ww','ｗｗ','www','ｗｗｗ','wwww','ｗｗｗｗ','笑','笑笑','（笑）','草','大草原','草生える','草不可避','くさ','クサ','lol','LOL','Lol','ワロタ','わろた','ワロス','わろす','ウケる','うける','爆笑','ばくしょう','腹筋崩壊','ふっきん'], minStage:'baby',
+  { id:'laugh', label:'笑う', keywords:['w','ｗ','W','Ｗ','ww','ｗｗ','www','ｗｗｗ','wwww','ｗｗｗｗ','笑','笑笑','（笑）','草','大草原','草生える','草不可避','くさ','クサ','lol','LOL','Lol','ワロタ','わろた','ワロス','わろす','ウケる','うける','爆笑','ばくしょう','腹筋崩壊','ふっきん','プロ'], minStage:'baby',
     play: async ()=>{ await eyeOverlayAnim('smile', 4, 220); } },
-  { id:'sleep', label:'寝る', keywords:['ねむい','眠い','ネムイ','寝る','寝ます','ねる','おやすみ','おやすみなさい','オヤスミ','ねむ','ネム','眠たい','ねむたい','睡魔','すいま','うとうと','ウトウト','こっくり','コックリ','寝落ち','ねおち','あくび','アクビ','欠伸','眠気','ねむけ','すやすや','スヤスヤ','就寝','しゅうしん'], minStage:'baby',
+  { id:'sleep', label:'寝る', keywords:['ねむい','眠い','ネムイ','寝る','寝ます','ねる','おやすみ','おやすみなさい','オヤスミ','ねむ','ネム','眠たい','ねむたい','睡魔','すいま','うとうと','ウトウト','こっくり','コックリ','寝落ち','ねおち','あくび','アクビ','欠伸','眠気','ねむけ','すやすや','スヤスヤ','就寝','しゅうしん','zzz','ZZZ'], minStage:'baby',
     play: async ()=>{ await sleepAnim(); } },
   { id:'stretch', label:'ストレッチ', keywords:['ストレッチ','すとれっち','ストレッチタイム','伸び','のび','背伸び','せのび','体操','たいそう','肩こり','かたこり','肩凝り','首痛い','くびいたい','腰伸ばす','こしのばす','腰痛い','こしいたい','リフレッシュ','りふれっしゅ','筋伸ばし','ストレッチしよ','ストレッチしよう','体をほぐす','からだをほぐす','ラジオ体操','らじおたいそう','ヨガ','よが','深呼吸','しんこきゅう'], minStage:'adult',
     play: async ()=>{ await stretchAnim(); } },
