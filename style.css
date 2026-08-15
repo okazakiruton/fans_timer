@@ -1,0 +1,360 @@
+:root{
+    --bg: #FFFFFF;
+    --surface: #F7F7F7;
+    --border: #EEEEEE;
+    --primary: #86D2E7;
+    --secondary: #5FC266;
+    --accent: #F49E00;
+    --text: #0A0A0A;
+    --text-secondary: #6B6B6B;
+    --success-bg: #E4F3E2;
+    --success-text: #1F6B2A;
+    --error: #D9534F;
+    /* legacy aliases kept so the rest of the stylesheet keeps working */
+    --lcd-bg: #EAF6FB;
+    --lcd-bg-dark: #EAF6FB;
+    --lcd-line: #0A0A0A;
+    --shell: #FFFFFF;
+    --shell-hi: #FFFFFF;
+    --ink: #0A0A0A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    background:var(--surface);
+    font-family:'Courier New', monospace;
+    color:var(--text);
+    padding:32px 16px;
+  }
+  h1{
+    font-size:14px;
+    letter-spacing:.08em;
+    color:var(--text-secondary);
+    font-weight:600;
+    margin:0;
+    text-align:center;
+  }
+  .device{
+    width:280px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:34px;
+    padding:22px 20px 22px;
+    box-shadow:0 8px 24px rgba(10,10,10,.08);
+    position:relative;
+  }
+  .screen-frame{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:10px;
+  }
+  .screen{
+    position:relative;
+    width:100%;
+    aspect-ratio: 4 / 3;
+    background: var(--lcd-bg);
+    border:1px solid var(--border);
+    border-radius:4px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .stage{
+    position:relative;
+    width:42%;
+    aspect-ratio:1/1;
+    transition: transform .7s ease-in-out;
+  }
+  .stage img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    opacity:0;
+    transition:opacity .04s steps(1);
+  }
+  .stage img.show{opacity:1;}
+  .sideobj{
+    position:absolute;
+    right:14%;
+    bottom:20%;
+    width:26%;
+    aspect-ratio:1/1;
+    pointer-events:none;
+  }
+  .sideobj img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    opacity:0;
+    transition:opacity .04s steps(1);
+  }
+  .sideobj img.show{
+    opacity:1;
+    animation: sideobj-pop .3s ease-out;
+  }
+  @keyframes sideobj-pop{
+    0%{ transform: scale(0.4); }
+    60%{ transform: scale(1.15); }
+    100%{ transform: scale(1); }
+  }
+  .obs-toggle{
+    position:fixed;
+    top:8px; left:8px;
+    z-index:100;
+    background:rgba(30,26,22,.75);
+    color:#c9c2b4;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:8px;
+    padding:6px 10px;
+    font-size:10px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .obs-back{
+    display:none;
+    top:auto !important;
+    left:auto !important;
+    bottom:8px;
+    right:8px;
+  }
+  /* OBS mode: strip every opaque background so only the character/effects/caption/timer
+     remain, on a fully transparent page the streamer can position anywhere as a
+     Browser Source. Enable by adding ?obs=1 to the file's URL. */
+  body.obs-mode{
+    background: transparent !important;
+    padding: 0;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  body.obs-mode h1,
+  body.obs-mode .stagebar,
+  body.obs-mode .panel,
+  body.obs-mode .note,
+  body.obs-mode .obs-toggle{
+    display:none !important;
+  }
+  /* only the manually-toggled preview (not the real ?obs=1 output) gets a way back */
+  body.obs-mode.preview-mode .obs-back{
+    display:block !important;
+  }
+  body.obs-mode .device{
+    background:none;
+    box-shadow:none;
+    border:none;
+    padding:0;
+    border-radius:0;
+    width:220px;
+  }
+  body.obs-mode .screen-frame{
+    background:none;
+    border:none;
+    padding:0;
+    box-shadow:none;
+  }
+  body.obs-mode .screen{
+    background:none;
+    border:none;
+  }
+  .wave{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:160%;
+    background: var(--primary);
+    clip-path: polygon(
+      0% 22%, 4% 16%, 8% 22%, 12% 16%, 16% 22%, 20% 16%, 24% 22%, 28% 16%,
+      32% 22%, 36% 16%, 40% 22%, 44% 16%, 48% 22%, 52% 16%, 56% 22%, 60% 16%,
+      64% 22%, 68% 16%, 72% 22%, 76% 16%, 80% 22%, 84% 16%, 88% 22%, 92% 16%,
+      96% 22%, 100% 16%, 100% 100%, 0% 100%
+    );
+    transform: translateY(105%);
+    transition: transform .55s cubic-bezier(.45,0,.2,1);
+    z-index: 30;
+    pointer-events:none;
+  }
+  .wave.active{ transform: translateY(0%); }
+  .caption{
+    position:absolute;
+    bottom:6px; left:0; right:0;
+    text-align:center;
+    font-size:9px;
+    color:var(--lcd-line);
+    letter-spacing:.05em;
+  }
+  .timer-ring{
+    position:absolute;
+    top:5px; right:5px;
+    width:30%;
+    aspect-ratio:1/1;
+    z-index:40;
+  }
+  .timer-ring svg{
+    width:100%; height:100%;
+    transform: rotate(-90deg);
+    overflow: visible;
+  }
+  .timer-ring circle{
+    fill:none;
+    stroke-width:5;
+  }
+  .ring-bg{ stroke: var(--border); }
+  .ring-fg{
+    stroke: var(--accent);
+    stroke-linecap: round;
+    stroke-dasharray: 106.8;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+  }
+  .ring-label{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:800;
+    color:var(--text);
+    letter-spacing:-.02em;
+  }
+  .stagebar{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:14px;
+  }
+  .stagebar button{
+    flex:1;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
+    border-radius:8px;
+    padding:8px 4px;
+    font-size:11px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .stagebar button.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--text);
+    font-weight:700;
+  }
+
+  .panel{
+    width:280px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .panel label{
+    font-size:11px;
+    color:var(--text-secondary);
+    letter-spacing:.05em;
+  }
+  .row{display:flex; gap:8px;}
+  input[type=text]{
+    flex:1;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:var(--text);
+    padding:9px 10px;
+    font-size:13px;
+    font-family: inherit;
+  }
+  input[type=text]:focus{outline:1px solid var(--primary);}
+  button.send, button.demo{
+    background:var(--accent);
+    color:var(--text);
+    border:none;
+    border-radius:8px;
+    padding:9px 14px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.03em;
+    cursor:pointer;
+  }
+  button.demo{
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    width:100%;
+  }
+  .chips{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .chips button{
+    background:var(--bg);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
+    border-radius:20px;
+    padding:5px 10px;
+    font-size:10px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .chips button:disabled{
+    opacity:.3;
+    cursor:not-allowed;
+  }
+  .queue{
+    display:flex;
+    gap:6px;
+    min-height:22px;
+    flex-wrap:wrap;
+  }
+  .queue span{
+    font-size:10px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
+    padding:3px 7px;
+    border-radius:6px;
+  }
+  .log{
+    max-height:110px;
+    overflow-y:auto;
+    font-size:11px;
+    color:var(--text-secondary);
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    border-top:1px solid var(--border);
+    padding-top:8px;
+  }
+  .log div span.tag{color:var(--accent); font-weight:700;}
+  .note{
+    width:280px;
+    font-size:11px;
+    line-height:1.6;
+    color:var(--text-secondary);
+  }
+  .conn-status{
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:6px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-secondary);
+  }
+  .conn-status.ok{ color:var(--success-text); background:var(--success-bg); border-color:var(--success-bg); }
+  .conn-status.err{ color:var(--error); }
