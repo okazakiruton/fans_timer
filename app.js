@@ -613,16 +613,36 @@ document.getElementById('guideCloseBtn').addEventListener('click', ()=>{
 });
 
 // ---- OBS URL copy button: builds the current page's URL + ?obs=1, ready to paste into OBS ----
+// ---- OBS URL: shown in a readonly field, with a copy button that has a fallback ----
+const obsUrlField = document.getElementById('obsUrlField');
+const obsUrl = window.location.origin + window.location.pathname + '?obs=1';
+obsUrlField.value = obsUrl;
+
 document.getElementById('copyObsUrlBtn').addEventListener('click', async ()=>{
-  const base = window.location.origin + window.location.pathname;
-  const obsUrl = base + '?obs=1';
   const statusEl = document.getElementById('copyObsUrlStatus');
-  try{
-    await navigator.clipboard.writeText(obsUrl);
-    statusEl.textContent = 'コピーしました: ' + obsUrl;
-  } catch(e){
-    statusEl.textContent = 'コピーできませんでした。手動でコピーしてください: ' + obsUrl;
+  let copied = false;
+
+  if(navigator.clipboard && window.isSecureContext){
+    try{
+      await navigator.clipboard.writeText(obsUrl);
+      copied = true;
+    } catch(e){ /* fall through to the manual-select fallback below */ }
   }
+
+  if(!copied){
+    // fallback for contexts where the async Clipboard API is unavailable or blocked
+    // (e.g. non-HTTPS pages, some in-app browsers): select the text and try execCommand.
+    obsUrlField.focus();
+    obsUrlField.select();
+    obsUrlField.setSelectionRange(0, obsUrl.length);
+    try{
+      copied = document.execCommand('copy');
+    } catch(e){ copied = false; }
+  }
+
+  statusEl.textContent = copied
+    ? 'コピーしました: ' + obsUrl
+    : '自動コピーできませんでした。上の欄が選択状態になっているので、Ctrl+C（Macは⌘+C）でコピーしてください';
 });
 renderStats();
 populateCustomCategorySelect();

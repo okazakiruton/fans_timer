@@ -23,7 +23,8 @@
     <li>OBSに設置する場合は、左上の「OBS表示プレビュー切替」で見た目を確認できます。実際にOBSへ設定する時は、下のボタンでURLをコピーして「ブラウザ」ソースのURL欄にそのまま貼り付けてください</li>
   </ol>
   <div class="row" style="margin-top:10px">
-    <button class="send" id="copyObsUrlBtn" style="width:100%">OBS用URLをコピー</button>
+    <input type="text" id="obsUrlField" readonly style="flex:1;font-size:11px" placeholder="OBS用URLがここに表示されます">
+    <button class="send" id="copyObsUrlBtn">コピー</button>
   </div>
   <div id="copyObsUrlStatus" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
 </div>
