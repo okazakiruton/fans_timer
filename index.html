@@ -12,6 +12,22 @@
 
 <h1>休憩どうぶつ</h1>
 
+<div class="panel" id="guidePanel">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <label style="margin:0">はじめに</label>
+    <button id="guideCloseBtn" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:14px;padding:0">×</button>
+  </div>
+  <ol style="margin:8px 0 0;padding-left:18px;font-size:12px;line-height:1.7;color:var(--text)">
+    <li>下の「Twitchチャンネルに接続」欄に、あなたの配信のチャンネル名を入力して「接続」を押します</li>
+    <li>「休憩タイマー」欄に休憩時間（分）を入力して「休憩スタート」を押すと、キャラが卵から育ち始めます</li>
+    <li>OBSに設置する場合は、左上の「OBS表示プレビュー切替」で見た目を確認できます。実際にOBSへ設定する時は、下のボタンでURLをコピーして「ブラウザ」ソースのURL欄にそのまま貼り付けてください</li>
+  </ol>
+  <div class="row" style="margin-top:10px">
+    <button class="send" id="copyObsUrlBtn" style="width:100%">OBS用URLをコピー</button>
+  </div>
+  <div id="copyObsUrlStatus" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
+</div>
+
 <div class="device">
   <div class="screen-frame">
     <div class="screen">
@@ -37,9 +53,10 @@
 <div class="panel">
   <label>休憩タイマー</label>
   <div class="row">
-    <input type="text" id="timerMinutes" value="5" placeholder="分">
+    <input type="text" id="timerMinutes" value="5" placeholder="分（1〜360）">
     <button class="send" id="timerStartBtn">休憩スタート</button>
   </div>
+  <div id="timerMinutesError" style="font-size:11px;color:var(--error)"></div>
 </div>
 
 <div class="panel">
@@ -86,13 +103,6 @@
     <div class="log" id="log"></div>
   </div>
 </details>
-
-<div class="note">
-  ※ 体（body/baby）の姿勢と足（leg）の動きはそれぞれ独立してランダムに切り替わり、タイミングも毎回ゆらぎを持たせています。
-  トイレ演出のあとは、水が流れるイメージの波形トランジションで場面転換します。
-  ストレッチは体の左右にarm_L（左腕・固定）とarm_R1/arm_R2（右腕・2コマ）を重ねて表示しています。
-  Twitch接続は外部ライブラリを使わず、ブラウザ標準のWebSocketでTwitchのIRCサーバーに直接匿名接続しています（配信者側のログインや権限設定は不要、コメント読み取りのみ）。同一ユーザーの連投は5秒のクールダウンで間引いています。
-</div>
 
 <script src="app.js"></script>
 </body>

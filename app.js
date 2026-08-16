@@ -512,7 +512,7 @@ let currentChannel = null;
 
 document.getElementById('connectBtn').addEventListener('click', ()=>{
   const channel = document.getElementById('channelInput').value.trim().replace(/^#/,'').toLowerCase();
-  if(!channel){ setStatus('チャンネル名を入力してください', 'err'); return; }
+  if(!channel){ setStatus('チャンネル名を入力してください（例: twitch.tv/あなたの名前 の「あなたの名前」の部分）', 'err'); return; }
   currentChannel = channel;
   manualDisconnect = false;
   reconnectAttempts = 0;
@@ -524,7 +524,7 @@ document.getElementById('connectBtn').addEventListener('click', ()=>{
 function connectTwitch(channel){
   if(ws){ try{ ws.close(); }catch(e){} clearInterval(pingIntervalId); }
 
-  setStatus('接続中…');
+  setStatus('接続しています…');
   lastMessageAt = null;
   updateLastReceivedLabel();
   ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
@@ -552,10 +552,9 @@ function connectTwitch(channel){
         // registration is confirmed complete now — safe to JOIN
         joined = true;
         ws.send('JOIN #' + channel);
-        setStatus('#'+channel+' に接続しました（コメント待機中）', 'ok');
       }
       if(line.includes('JOIN') && line.includes('#'+channel)){
-        setStatus('#'+channel+' に参加しました（コメント待機中）', 'ok');
+        setStatus('「'+channel+'」のチャットにつながりました。コメントを待っています', 'ok');
       }
       if(line.includes('PRIVMSG')){
         const parsed = parseIrcMessage(line);
@@ -577,20 +576,20 @@ function connectTwitch(channel){
         submitComment(parsed.message, user);
       }
       if(line.includes('NOTICE') && line.toLowerCase().includes('login')){
-        setStatus('接続失敗（チャンネル名を確認してください）', 'err');
+        setStatus('接続できませんでした。チャンネル名のスペルを確認してもう一度お試しください', 'err');
       }
     }
   };
 
   ws.onerror = ()=>{
-    setStatus('接続エラーが発生しました', 'err');
+    setStatus('通信エラーが発生しました。少し待ってから自動で接続し直します', 'err');
   };
   ws.onclose = ()=>{
     clearInterval(pingIntervalId);
     if(manualDisconnect) return;
     reconnectAttempts++;
     const delaySec = Math.min(30, 3 * reconnectAttempts); // backs off up to 30s
-    setStatus('切断されました。'+delaySec+'秒後に再接続します…', 'err');
+    setStatus('接続が切れました。'+delaySec+'秒後に自動で接続し直します…', 'err');
     clearTimeout(reconnectTimeoutId);
     reconnectTimeoutId = setTimeout(()=> connectTwitch(channel), delaySec*1000);
   };
@@ -599,6 +598,32 @@ function connectTwitch(channel){
 renderChips();
 startIdle();
 loadSettings();
+
+// ---- first-time guide: dismissible, remembered via localStorage ----
+const STORAGE_KEY_GUIDE_DISMISSED = 'breakpet_guide_dismissed';
+const guidePanel = document.getElementById('guidePanel');
+try{
+  if(localStorage.getItem(STORAGE_KEY_GUIDE_DISMISSED) === '1'){
+    guidePanel.style.display = 'none';
+  }
+} catch(e){}
+document.getElementById('guideCloseBtn').addEventListener('click', ()=>{
+  guidePanel.style.display = 'none';
+  try{ localStorage.setItem(STORAGE_KEY_GUIDE_DISMISSED, '1'); } catch(e){}
+});
+
+// ---- OBS URL copy button: builds the current page's URL + ?obs=1, ready to paste into OBS ----
+document.getElementById('copyObsUrlBtn').addEventListener('click', async ()=>{
+  const base = window.location.origin + window.location.pathname;
+  const obsUrl = base + '?obs=1';
+  const statusEl = document.getElementById('copyObsUrlStatus');
+  try{
+    await navigator.clipboard.writeText(obsUrl);
+    statusEl.textContent = 'コピーしました: ' + obsUrl;
+  } catch(e){
+    statusEl.textContent = 'コピーできませんでした。手動でコピーしてください: ' + obsUrl;
+  }
+});
 renderStats();
 populateCustomCategorySelect();
 renderCustomKeywordList();
@@ -666,10 +691,33 @@ function startBreakTimer(totalMinutes){
   }, 1000);
 }
 
+function validateMinutesInput(){
+  const el = document.getElementById('timerMinutes');
+  const errEl = document.getElementById('timerMinutesError');
+  const raw = el.value.trim();
+  const val = parseFloat(raw);
+  if(raw === '' || isNaN(val)){
+    errEl.textContent = '数字を入力してください';
+    return null;
+  }
+  if(val <= 0){
+    errEl.textContent = '1分以上の値を入力してください';
+    return null;
+  }
+  if(val > 360){
+    errEl.textContent = '360分以下で入力してください';
+    return null;
+  }
+  errEl.textContent = '';
+  return val;
+}
+
 document.getElementById('timerStartBtn').addEventListener('click', ()=>{
-  const mins = parseFloat(document.getElementById('timerMinutes').value) || 5;
+  const mins = validateMinutesInput();
+  if(mins === null) return;
   startBreakTimer(mins);
 });
+document.getElementById('timerMinutes').addEventListener('input', validateMinutesInput);
 
 // initialize ring at 0:00 until a timer is started
 updateRing(0, 1);

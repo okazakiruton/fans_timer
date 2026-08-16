@@ -144,6 +144,7 @@
   body.obs-mode .stagebar,
   body.obs-mode .panel,
   body.obs-mode .note,
+  body.obs-mode #guidePanel,
   body.obs-mode .obs-toggle{
     display:none !important;
   }
