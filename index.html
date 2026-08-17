@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>休憩どうぶつ</title>
+<title>ずっちタイマー</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -10,13 +10,10 @@
 <button class="obs-toggle" id="obsToggleBtn">OBS表示プレビュー切替</button>
 <button class="obs-toggle obs-back" id="obsBackBtn">← 戻る</button>
 
-<h1>休憩どうぶつ</h1>
+<h1>ずっちタイマー</h1>
 
-<div class="panel" id="guidePanel">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <label style="margin:0">はじめに</label>
-    <button id="guideCloseBtn" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:14px;padding:0">×</button>
-  </div>
+<details class="panel" id="guidePanel" open>
+  <summary style="cursor:pointer;font-size:11px;color:var(--text-secondary);letter-spacing:.05em">はじめに（クリックで開閉）</summary>
   <ol style="margin:8px 0 0;padding-left:18px;font-size:12px;line-height:1.7;color:var(--text)">
     <li>下の「Twitchチャンネルに接続」欄に、あなたの配信のチャンネル名を入力して「接続」を押します</li>
     <li>「休憩タイマー」欄に休憩時間（分）を入力して「休憩スタート」を押すと、キャラが卵から育ち始めます</li>
@@ -27,6 +24,13 @@
     <button class="send" id="copyObsUrlBtn">コピー</button>
   </div>
   <div id="copyObsUrlStatus" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
+</details>
+
+<div class="panel">
+  <label>保存データの管理</label>
+  <p style="font-size:11px;color:var(--text-secondary);margin:4px 0 10px">チャンネル名・休憩時間・累計反応回数・カスタムキーワードなど、このブラウザに保存している情報を全て削除します</p>
+  <button class="demo" id="clearDataBtn">保存データを全て削除</button>
+  <div id="clearDataStatus" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
 </div>
 
 <div class="device">

@@ -599,19 +599,6 @@ renderChips();
 startIdle();
 loadSettings();
 
-// ---- first-time guide: dismissible, remembered via localStorage ----
-const STORAGE_KEY_GUIDE_DISMISSED = 'breakpet_guide_dismissed';
-const guidePanel = document.getElementById('guidePanel');
-try{
-  if(localStorage.getItem(STORAGE_KEY_GUIDE_DISMISSED) === '1'){
-    guidePanel.style.display = 'none';
-  }
-} catch(e){}
-document.getElementById('guideCloseBtn').addEventListener('click', ()=>{
-  guidePanel.style.display = 'none';
-  try{ localStorage.setItem(STORAGE_KEY_GUIDE_DISMISSED, '1'); } catch(e){}
-});
-
 // ---- OBS URL copy button: builds the current page's URL + ?obs=1, ready to paste into OBS ----
 // ---- OBS URL: shown in a readonly field, with a copy button that has a fallback ----
 const obsUrlField = document.getElementById('obsUrlField');
@@ -741,3 +728,33 @@ document.getElementById('timerMinutes').addEventListener('input', validateMinute
 
 // initialize ring at 0:00 until a timer is started
 updateRing(0, 1);
+
+// ---- clear all locally stored data (settings, stats, custom keywords) ----
+document.getElementById('clearDataBtn').addEventListener('click', ()=>{
+  const statusEl = document.getElementById('clearDataStatus');
+  if(!confirm('保存されている全てのデータ（チャンネル名・休憩時間・累計反応回数・カスタムキーワード）を削除します。よろしいですか？')){
+    return;
+  }
+  try{
+    localStorage.removeItem(STORAGE_KEY_SETTINGS);
+    localStorage.removeItem(STORAGE_KEY_STATS);
+    localStorage.removeItem(STORAGE_KEY_CUSTOM_KEYWORDS);
+  } catch(e){}
+
+  // strip any custom words that were merged into the live REACTIONS keyword lists
+  Object.keys(customKeywords).forEach(id=>{
+    const r = reactionsById[id];
+    if(!r) return;
+    customKeywords[id].forEach(word=>{
+      r.keywords = r.keywords.filter(w => w !== word);
+    });
+  });
+  customKeywords = {};
+  reactionStats = {};
+
+  document.getElementById('channelInput').value = '';
+  document.getElementById('timerMinutes').value = '5';
+  renderStats();
+  renderCustomKeywordList();
+  statusEl.textContent = '削除しました';
+});
