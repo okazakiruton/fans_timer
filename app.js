@@ -261,6 +261,7 @@ function addCustomKeyword(){
   if(r && !r.keywords.includes(word)) r.keywords.push(word);
   saveCustomKeywords();
   renderCustomKeywordList();
+  renderAllKeywords();
   input.value = '';
 }
 
@@ -272,6 +273,16 @@ function removeCustomKeyword(catId, word){
   const r = reactionsById[catId];
   if(r) r.keywords = r.keywords.filter(w => w !== word);
   renderCustomKeywordList();
+  renderAllKeywords();
+}
+
+// ---- full keyword reference (built-in + custom, read-only, always up to date) ----
+function renderAllKeywords(){
+  const el = document.getElementById('allKeywordsView');
+  el.innerHTML = REACTIONS.map(r => {
+    const words = r.keywords.join('、');
+    return `<div style="margin-bottom:8px"><strong>${r.label}</strong>（${r.keywords.length}語）<br><span style="color:var(--text-secondary)">${words}</span></div>`;
+  }).join('');
 }
 
 function renderChips(){
@@ -634,6 +645,7 @@ document.getElementById('copyObsUrlBtn').addEventListener('click', async ()=>{
 renderStats();
 populateCustomCategorySelect();
 renderCustomKeywordList();
+renderAllKeywords();
 document.getElementById('customCategorySelect').addEventListener('change', renderCustomKeywordList);
 document.getElementById('customAddBtn').addEventListener('click', addCustomKeyword);
 document.getElementById('customKeywordInput').addEventListener('keydown', (e)=>{
@@ -756,5 +768,6 @@ document.getElementById('clearDataBtn').addEventListener('click', ()=>{
   document.getElementById('timerMinutes').value = '5';
   renderStats();
   renderCustomKeywordList();
+  renderAllKeywords();
   statusEl.textContent = '削除しました';
 });
