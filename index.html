@@ -21,19 +21,8 @@
 
 <h1>ずっちタイマー</h1>
 
-<details class="panel" id="guidePanel" open>
-  <summary style="cursor:pointer;font-size:11px;color:var(--text-secondary);letter-spacing:.05em">はじめに（クリックで開閉）</summary>
-  <ol style="margin:8px 0 0;padding-left:18px;font-size:12px;line-height:1.7;color:var(--text)">
-    <li>下の「Twitchチャンネルに接続」欄に、あなたの配信のチャンネル名を入力して「接続」を押します</li>
-    <li>「休憩タイマー」欄に休憩時間（分）を入力して「休憩スタート」を押すと、キャラが卵から育ち始めます</li>
-    <li>OBSに設置する場合は、左上の「OBS表示プレビュー切替」で見た目を確認できます。実際にOBSへ設定する時は、下のボタンでURLをコピーして「ブラウザ」ソースのURL欄にそのまま貼り付けてください</li>
-  </ol>
-  <div class="row" style="margin-top:10px">
-    <input type="text" id="obsUrlField" readonly style="flex:1;font-size:11px" placeholder="OBS用URLがここに表示されます">
-    <button class="send" id="copyObsUrlBtn">コピー</button>
-  </div>
-  <div id="copyObsUrlStatus" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
-</details>
+<div class="layout">
+<div class="layout-col">
 
 <div class="device">
   <div class="screen-frame">
@@ -79,14 +68,31 @@
   </label>
 </div>
 
-<div class="panel">
-  <label>累計反応回数（このブラウザに保存）</label>
-  <div id="statsView" style="font-size:11px;color:var(--text-secondary);display:flex;flex-wrap:wrap;gap:6px"></div>
 </div>
+<div class="layout-col">
 
-<div class="panel">
-  <label>キーワードのカスタム管理（このブラウザに保存）</label>
-  <div class="row">
+<details class="panel" id="guidePanel">
+  <summary style="cursor:pointer;font-size:11px;color:var(--text-secondary);letter-spacing:.05em">はじめに（クリックで開閉）</summary>
+  <ol style="margin:8px 0 0;padding-left:18px;font-size:12px;line-height:1.7;color:var(--text)">
+    <li>下の「Twitchチャンネルに接続」欄に、あなたの配信のチャンネル名を入力して「接続」を押します</li>
+    <li>「休憩タイマー」欄に休憩時間（分）を入力して「休憩スタート」を押すと、キャラが卵から育ち始めます</li>
+    <li>OBSに設置する場合は、左上の「OBS表示プレビュー切替」で見た目を確認できます。実際にOBSへ設定する時は、下のボタンでURLをコピーして「ブラウザ」ソースのURL欄にそのまま貼り付けてください</li>
+  </ol>
+  <div class="row" style="margin-top:10px">
+    <input type="text" id="obsUrlField" readonly style="flex:1;font-size:11px" placeholder="OBS用URLがここに表示されます">
+    <button class="send" id="copyObsUrlBtn">コピー</button>
+  </div>
+  <div id="copyObsUrlStatus" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
+</details>
+
+<details class="panel">
+  <summary style="cursor:pointer;font-size:11px;color:var(--text-secondary);letter-spacing:.05em">累計反応回数（クリックで開閉）</summary>
+  <div id="statsView" style="font-size:11px;color:var(--text-secondary);display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+</details>
+
+<details class="panel">
+  <summary style="cursor:pointer;font-size:11px;color:var(--text-secondary);letter-spacing:.05em">キーワードのカスタム管理（クリックで開閉）</summary>
+  <div class="row" style="margin-top:8px">
     <select id="customCategorySelect" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:9px 10px;font-size:13px;font-family:inherit"></select>
   </div>
   <div class="row">
@@ -94,7 +100,7 @@
     <button class="send" id="customAddBtn">追加</button>
   </div>
   <div class="chips" id="customKeywordList"></div>
-</div>
+</details>
 
 <details class="panel" style="padding:0">
   <summary style="cursor:pointer;padding:16px;font-size:11px;color:var(--text-secondary);letter-spacing:.05em">テスト・デバッグ用パネル（配信では不要）</summary>
@@ -111,11 +117,14 @@
   </div>
 </details>
 
-<div class="panel">
-  <label>保存データの管理</label>
-  <p style="font-size:11px;color:var(--text-secondary);margin:4px 0 10px">チャンネル名・休憩時間・累計反応回数・カスタムキーワードなど、このブラウザに保存している情報を全て削除します</p>
+<details class="panel">
+  <summary style="cursor:pointer;font-size:11px;color:var(--text-secondary);letter-spacing:.05em">保存データの管理（クリックで開閉）</summary>
+  <p style="font-size:11px;color:var(--text-secondary);margin:8px 0 10px">チャンネル名・休憩時間・累計反応回数・カスタムキーワードなど、このブラウザに保存している情報を全て削除します</p>
   <button class="demo" id="clearDataBtn">保存データを全て削除</button>
   <div id="clearDataStatus" style="font-size:11px;color:var(--text-secondary);margin-top:4px"></div>
+</details>
+
+</div>
 </div>
 
 <script src="app.js"></script>
