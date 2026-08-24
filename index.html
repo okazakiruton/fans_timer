@@ -46,7 +46,7 @@
   </div>
 </div>
 
-<div class="panel">
+<div class="panel essential">
   <label>休憩タイマー</label>
   <div class="row">
     <input type="text" id="timerMinutes" value="5" placeholder="分（1〜360）">
@@ -55,7 +55,7 @@
   <div id="timerMinutesError" style="font-size:11px;color:var(--error)"></div>
 </div>
 
-<div class="panel">
+<div class="panel essential">
   <label>Twitchチャンネルに接続（読み取り専用・匿名）</label>
   <div class="row">
     <input type="text" id="channelInput" placeholder="チャンネル名（例: your_channel）">
@@ -77,6 +77,7 @@
     <li>下の「Twitchチャンネルに接続」欄に、あなたの配信のチャンネル名を入力して「接続」を押します</li>
     <li>「休憩タイマー」欄に休憩時間（分）を入力して「休憩スタート」を押すと、キャラが卵から育ち始めます</li>
     <li>OBSに設置する場合は、左上の「OBS表示プレビュー切替」で見た目を確認できます。実際にOBSへ設定する時は、下のボタンでURLをコピーして「ブラウザ」ソースのURL欄にそのまま貼り付けてください</li>
+    <li>OBSに設定したあとは、そのソースを右クリック→「操作（Interact）」を選ぶと、OBSの中で直接「休憩スタート」やTwitch接続の操作ができます（OBSのブラウザは配信者ご自身の通常のブラウザとは別物なので、この中で毎回操作する必要があります）</li>
   </ol>
   <div class="row" style="margin-top:10px">
     <input type="text" id="obsUrlField" readonly style="flex:1;font-size:11px" placeholder="OBS用URLがここに表示されます">

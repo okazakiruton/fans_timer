@@ -155,11 +155,19 @@
   }
   body.obs-mode h1,
   body.obs-mode .stagebar,
-  body.obs-mode .panel,
+  body.obs-mode .panel:not(.essential),
   body.obs-mode .note,
-  body.obs-mode #guidePanel,
   body.obs-mode .obs-toggle{
     display:none !important;
+  }
+  /* the timer + Twitch-connect controls stay usable in OBS mode: OBS's browser
+     source runs in its own separate profile, so this is the only place the
+     streamer can actually start the break timer / connect to chat. Right-click
+     the source in OBS and choose "Interact" to click these. */
+  body.obs-mode .panel.essential{
+    background: rgba(255,255,255,.92);
+    border:1px solid var(--border);
+    box-shadow:0 4px 16px rgba(10,10,10,.12);
   }
   /* only the manually-toggled preview (not the real ?obs=1 output) gets a way back */
   body.obs-mode.preview-mode .obs-back{
