@@ -6,7 +6,7 @@ const ALL_KEYS = [
   'eye1','eye2','eye_sleep','eye_heart','smile',
   'leg1','leg2','arm_L','arm_R1','arm_R2',
   'effect_sparkle','effect_sparkle2','effect_heart','effect_bad','effect_angry',
-  'zzz1','zzz2','zzz3'
+  'zzz1','zzz2','zzz3','angel_1','angel_2'
 ];
 
 // ---- localStorage persistence: last-used settings + cumulative reaction stats ----
@@ -59,7 +59,7 @@ const chipsEl = document.getElementById('chips');
 // build img elements for every asset, layered by z-order groups
 const SIDE_KEYS = ['drink','drink_1','drink_2','drink_3','ebi','ebi_1','ebi_2','wc_1','doll'];
 const layerEls = {}; // key -> img el
-const Z = { base:1, leg:2, arm:2, eye:3, effect:4, zzz:5 };
+const Z = { base:1, leg:2, arm:2, eye:3, effect:4, zzz:5, angel:6 };
 function keyToLayer(k){
   if(['egg','egg2','baby1','baby2','body1','body2','body3','doll'].includes(k)) return 'base';
   if(['leg1','leg2'].includes(k)) return 'leg';
@@ -67,6 +67,7 @@ function keyToLayer(k){
   if(['eye1','eye2','eye_sleep','eye_heart','smile'].includes(k)) return 'eye';
   if(k.startsWith('effect_')) return 'effect';
   if(k.startsWith('zzz')) return 'zzz';
+  if(k.startsWith('angel_')) return 'angel';
   return 'base';
 }
 ALL_KEYS.forEach(k=>{
@@ -97,6 +98,7 @@ function showSideOnly(keys){
 let currentStage = 'egg';
 let idleTimer = null;
 let reactionPlaying = false;
+let timerEnded = false; // true once the break timer hits 0:00, while stage is adult
 
 const IDLE = {
   egg:  { base:['egg','egg2'], eye:null, leg:null, wander:false },
@@ -107,6 +109,7 @@ const IDLE = {
 let idleFrame = 0;
 let idleTimeoutId = null;
 let wanderTimer = null;
+const ANGEL_FRAMES = ['angel_1','angel_2'];
 function tickIdle(){
   if(!reactionPlaying){
     const cfg = IDLE[currentStage];
@@ -118,7 +121,17 @@ function tickIdle(){
       const legIdx = Math.floor(Math.random()*cfg.leg.length);
       keys.push(cfg.leg[legIdx]);
     }
+    if(timerEnded && currentStage === 'adult'){
+      keys.push(ANGEL_FRAMES[idleFrame % ANGEL_FRAMES.length]);
+    }
     showOnly(keys);
+    // sepia tint on the character itself (not the angel overlay) once the timer has ended
+    const sepiaOn = timerEnded && currentStage === 'adult';
+    keys.forEach(k=>{
+      if(!k.startsWith('angel_') && layerEls[k]){
+        layerEls[k].style.filter = sepiaOn ? 'sepia(1)' : '';
+      }
+    });
     idleFrame++;
   }
   const nextDelay = 320 + Math.random()*380; // 320-700ms, irregular on purpose
@@ -657,18 +670,11 @@ document.getElementById('debugLogToggle').addEventListener('change', (e)=>{
 document.getElementById('timerMinutes').addEventListener('change', saveSettings);
 
 // ---- OBS mode: transparent, chrome-free overlay for use as an OBS Browser Source ----
-// Real usage: set the OBS Browser Source URL to this file + "?obs=1" so it loads
-// straight into clean mode (no visible toggle button, no panels, transparent page).
+// Set the OBS Browser Source URL to this file + "?obs=1" so it loads in that mode.
 const params = new URLSearchParams(window.location.search);
 if(params.get('obs') === '1'){
-  document.body.classList.add('obs-mode'); // real OBS output: no preview-mode, so no back button
+  document.body.classList.add('obs-mode');
 }
-document.getElementById('obsToggleBtn').addEventListener('click', ()=>{
-  document.body.classList.add('obs-mode', 'preview-mode');
-});
-document.getElementById('obsBackBtn').addEventListener('click', ()=>{
-  document.body.classList.remove('obs-mode', 'preview-mode');
-});
 
 
 // ---- break countdown timer (circular ring + mm:ss) ----
@@ -692,6 +698,7 @@ function startBreakTimer(totalMinutes){
   clearInterval(timerIntervalId);
   const totalSeconds = Math.max(1, Math.round(totalMinutes*60));
   let remaining = totalSeconds;
+  timerEnded = false;
   updateRing(remaining, totalSeconds);
   setStage('egg'); // every break restarts the growth timeline from the egg
   timerIntervalId = setInterval(()=>{
@@ -705,7 +712,8 @@ function startBreakTimer(totalMinutes){
     }
     if(remaining <= 0){
       clearInterval(timerIntervalId);
-      ringLabel.textContent = '0:00';
+      timerEnded = true;
+      ringLabel.textContent = '0:00 終了';
     }
   }, 1000);
 }

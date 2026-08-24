@@ -124,26 +124,6 @@
     60%{ transform: scale(1.15); }
     100%{ transform: scale(1); }
   }
-  .obs-toggle{
-    position:fixed;
-    top:8px; left:8px;
-    z-index:100;
-    background:rgba(30,26,22,.75);
-    color:#c9c2b4;
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:8px;
-    padding:6px 10px;
-    font-size:10px;
-    font-family:inherit;
-    cursor:pointer;
-  }
-  .obs-back{
-    display:none;
-    top:auto !important;
-    left:auto !important;
-    bottom:8px;
-    right:8px;
-  }
   /* OBS mode: strip every opaque background so only the character/effects/caption/timer
      remain, on a fully transparent page the streamer can position anywhere as a
      Browser Source. Enable by adding ?obs=1 to the file's URL. */
@@ -155,23 +135,17 @@
   }
   body.obs-mode h1,
   body.obs-mode .stagebar,
-  body.obs-mode .panel:not(.essential),
-  body.obs-mode .note,
-  body.obs-mode .obs-toggle{
+  body.obs-mode .note{
     display:none !important;
   }
-  /* the timer + Twitch-connect controls stay usable in OBS mode: OBS's browser
-     source runs in its own separate profile, so this is the only place the
-     streamer can actually start the break timer / connect to chat. Right-click
-     the source in OBS and choose "Interact" to click these. */
-  body.obs-mode .panel.essential{
+  /* every panel stays usable in OBS mode: OBS's browser source runs in its own
+     separate profile, so this is the only place the streamer can actually
+     operate the app's controls. Right-click the source in OBS and choose
+     "Interact" to click these. */
+  body.obs-mode .panel{
     background: rgba(255,255,255,.92);
     border:1px solid var(--border);
     box-shadow:0 4px 16px rgba(10,10,10,.12);
-  }
-  /* only the manually-toggled preview (not the real ?obs=1 output) gets a way back */
-  body.obs-mode.preview-mode .obs-back{
-    display:block !important;
   }
   body.obs-mode .device{
     background:none;
