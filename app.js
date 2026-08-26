@@ -623,6 +623,20 @@ renderChips();
 startIdle();
 loadSettings();
 
+// ---- dark mode: manual toggle, remembered via localStorage ----
+const STORAGE_KEY_DARK_MODE = 'breakpet_dark_mode';
+const darkModeToggle = document.getElementById('darkModeToggle');
+try{
+  if(localStorage.getItem(STORAGE_KEY_DARK_MODE) === '1'){
+    document.body.classList.add('dark-mode');
+    darkModeToggle.checked = true;
+  }
+} catch(e){}
+darkModeToggle.addEventListener('change', (e)=>{
+  document.body.classList.toggle('dark-mode', e.target.checked);
+  try{ localStorage.setItem(STORAGE_KEY_DARK_MODE, e.target.checked ? '1' : '0'); } catch(err){}
+});
+
 // ---- OBS URL copy button: builds the current page's URL + ?obs=1, ready to paste into OBS ----
 // ---- OBS URL: shown in a readonly field, with a copy button that has a fallback ----
 const obsUrlField = document.getElementById('obsUrlField');

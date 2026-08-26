@@ -18,6 +18,25 @@
     --shell-hi: #FFFFFF;
     --ink: #0A0A0A;
   }
+  body.dark-mode{
+    --bg: #1B1812;
+    --surface: #14120E;
+    --border: #3A352F;
+    --primary: #86D2E7;
+    --secondary: #5FC266;
+    --accent: #F49E00;
+    --text: #F4EFE6;
+    --text-secondary: #A89E8E;
+    --success-bg: #1F3A22;
+    --success-text: #8FD19E;
+    --error: #E08585;
+    --lcd-bg: #22303A;
+    --lcd-bg-dark: #22303A;
+    --lcd-line: #F4EFE6;
+    --shell: #1B1812;
+    --shell-hi: #1B1812;
+    --ink: #F4EFE6;
+  }
   *{box-sizing:border-box;}
   body{
     margin:0;
@@ -146,6 +165,9 @@
     background: rgba(255,255,255,.92);
     border:1px solid var(--border);
     box-shadow:0 4px 16px rgba(10,10,10,.12);
+  }
+  body.obs-mode.dark-mode .panel{
+    background: rgba(27,24,18,.92);
   }
   body.obs-mode .device{
     background:none;
