@@ -57,7 +57,7 @@ const logEl = document.getElementById('log');
 const chipsEl = document.getElementById('chips');
 
 // build img elements for every asset, layered by z-order groups
-const SIDE_KEYS = ['drink','drink_1','drink_2','drink_3','ebi','ebi_1','ebi_2','wc_1','doll'];
+const SIDE_KEYS = ['drink','drink_1','drink_2','drink_3','ebi','ebi_1','ebi_2','wc_1','doll','baum'];
 const layerEls = {}; // key -> img el
 const Z = { base:1, leg:2, arm:2, eye:3, effect:4, zzz:5, angel:6 };
 function keyToLayer(k){
@@ -65,7 +65,7 @@ function keyToLayer(k){
   if(['leg1','leg2'].includes(k)) return 'leg';
   if(['arm_L','arm_R1','arm_R2'].includes(k)) return 'arm';
   if(['eye1','eye2','eye_sleep','eye_heart','smile'].includes(k)) return 'eye';
-  if(k.startsWith('effect_') || k === 'baum') return 'effect';
+  if(k.startsWith('effect_')) return 'effect';
   if(k.startsWith('zzz')) return 'zzz';
   if(k.startsWith('angel_')) return 'angel';
   return 'base';
@@ -184,12 +184,8 @@ const REACTIONS = [
     play: async ()=>{ await flashEffect(['effect_bad'], 3); } },
   { id:'angry', label:'怒り', keywords:['怒った','おこった','怒ったよ','なんでだよ','なんでだ','許さん','許さない','ふざけんな','ふざけるな','マジ怒','マジで怒った','ぷんぷん','プンプン','むかつく','ムカつく','腹立つ','はらたつ','イライラ','いらいら','キレた','きれた','切れた','激怒','げきど','おこだよ','おこだぞ','おこだ','おこりんぼ','グヌヌ','ぐぬぬ','怒り心頭','おこりしんとう','頭に来た','あたまにきた','ふざけないで','ふざけないでよ','あんまりだ','ひどすぎる','許せない','ゆるせない','我慢の限界','がまんのげんかい','angry','Angry','mad','Mad','カンカン','かんかん','ぶちギレ','ぶちぎれ'], minStage:'egg',
     play: async ()=>{
-      const base = IDLE[currentStage].base;
-      for(let i=0;i<3;i++){
-        const b = base[i % base.length];
-        showOnly([b, 'effect_angry', 'baum', ...currentEyeLeg(i)]);
-        await sleep(260);
-      }
+      playSideObject(['baum'], 780); // fires alongside the flash below, same slot as drink/ebi/wc
+      await flashEffect(['effect_angry'], 3);
     } },
   { id:'eat', label:'食べる', keywords:['おなかすいた','お腹すいた','お腹空いた','おなかへった','お腹減った','ごはん','ゴハン','ご飯','おやつ','オヤツ','食べたい','たべたい','ランチ','らんち','昼飯','ひるめし','晩ごはん','ばんごはん','夕飯','ゆうはん','朝ごはん','あさごはん','もぐもぐ','モグモグ','パクパク','ぱくぱく','腹ペコ','はらぺこ','食事','しょくじ','おいしそう','美味しそう','グルメ','ぐるめ','伊勢海老','イセエビ','海老','えび'], minStage:'baby', pausesIdle:false,
     play: async ()=>{ await playSideObject(['ebi','ebi_1','ebi_2'], 260); } },
