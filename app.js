@@ -5,7 +5,7 @@ const ALL_KEYS = [
   'egg','egg2','baby1','baby2','body1','body2','body3',
   'eye1','eye2','eye_sleep','eye_heart','smile',
   'leg1','leg2','arm_L','arm_R1','arm_R2',
-  'effect_sparkle','effect_sparkle2','effect_heart','effect_bad','effect_angry',
+  'effect_sparkle','effect_sparkle2','effect_heart','effect_bad','effect_angry','baum',
   'zzz1','zzz2','zzz3','angel_1','angel_2'
 ];
 
@@ -65,7 +65,7 @@ function keyToLayer(k){
   if(['leg1','leg2'].includes(k)) return 'leg';
   if(['arm_L','arm_R1','arm_R2'].includes(k)) return 'arm';
   if(['eye1','eye2','eye_sleep','eye_heart','smile'].includes(k)) return 'eye';
-  if(k.startsWith('effect_')) return 'effect';
+  if(k.startsWith('effect_') || k === 'baum') return 'effect';
   if(k.startsWith('zzz')) return 'zzz';
   if(k.startsWith('angel_')) return 'angel';
   return 'base';
@@ -182,8 +182,15 @@ const REACTIONS = [
     play: async ()=>{ await flashEffect(['effect_heart'], 3, currentStage==='adult' ? 'eye_heart' : null); } },
   { id:'gan', label:'ガーン', keywords:['きもい','キモイ','気持ち悪い','うざい','ウザイ','うっとうしい','つまらない','つまんない','しょぼい','ショボい','bad','Bad','BAD','ひどい','ヒドイ','酷い','微妙','びみょう','ビミョー','げんなり','うわぁ','うわあ','ドン引き','どんびき','さむい','サムい','寒い','いたい','イタイ','痛い','きつい','キツイ','がっかり','ガッカリ'], minStage:'egg',
     play: async ()=>{ await flashEffect(['effect_bad'], 3); } },
-  { id:'angry', label:'怒り', keywords:['怒った','おこった','怒ったよ','なんでだよ','なんでだ','許さん','許さない','ふざけんな','ふざけるな','マジ怒','マジで怒った','ぷんぷん','バウム','ばうむ','バウムクーヘン','プンプン','むかつく','ムカつく','腹立つ','はらたつ','イライラ','いらいら','キレた','きれた','切れた','激怒','げきど','おこだよ','おこだぞ','おこだ','おこりんぼ','グヌヌ','ぐぬぬ','怒り心頭','おこりしんとう','頭に来た','あたまにきた','ふざけないで','ふざけないでよ','あんまりだ','ひどすぎる','許せない','ゆるせない','我慢の限界','がまんのげんかい','angry','Angry','mad','Mad','カンカン','かんかん','ぶちギレ','ぶちぎれ'], minStage:'egg',
-    play: async ()=>{ await flashEffect(['effect_angry'], 3); } },
+  { id:'angry', label:'怒り', keywords:['怒った','おこった','怒ったよ','なんでだよ','なんでだ','許さん','許さない','ふざけんな','ふざけるな','マジ怒','マジで怒った','ぷんぷん','プンプン','むかつく','ムカつく','腹立つ','はらたつ','イライラ','いらいら','キレた','きれた','切れた','激怒','げきど','おこだよ','おこだぞ','おこだ','おこりんぼ','グヌヌ','ぐぬぬ','怒り心頭','おこりしんとう','頭に来た','あたまにきた','ふざけないで','ふざけないでよ','あんまりだ','ひどすぎる','許せない','ゆるせない','我慢の限界','がまんのげんかい','angry','Angry','mad','Mad','カンカン','かんかん','ぶちギレ','ぶちぎれ'], minStage:'egg',
+    play: async ()=>{
+      const base = IDLE[currentStage].base;
+      for(let i=0;i<3;i++){
+        const b = base[i % base.length];
+        showOnly([b, 'effect_angry', 'baum', ...currentEyeLeg(i)]);
+        await sleep(260);
+      }
+    } },
   { id:'eat', label:'食べる', keywords:['おなかすいた','お腹すいた','お腹空いた','おなかへった','お腹減った','ごはん','ゴハン','ご飯','おやつ','オヤツ','食べたい','たべたい','ランチ','らんち','昼飯','ひるめし','晩ごはん','ばんごはん','夕飯','ゆうはん','朝ごはん','あさごはん','もぐもぐ','モグモグ','パクパク','ぱくぱく','腹ペコ','はらぺこ','食事','しょくじ','おいしそう','美味しそう','グルメ','ぐるめ','伊勢海老','イセエビ','海老','えび'], minStage:'baby', pausesIdle:false,
     play: async ()=>{ await playSideObject(['ebi','ebi_1','ebi_2'], 260); } },
   { id:'toilet', label:'トイレ', keywords:['トイレ','といれ','トイレット','おしっこ','オシッコ','うんち','ウンチ','wc','WC','Wc','お手洗い','おてあらい','化粧室','けしょうしつ','便所','べんじょ','レストルーム','restroom','小用','しょうよう','大用','トイレ休憩','といれきゅうけい','おトイレ','おといれ','尿意','にょうい','催した','もよおした','トイレタイム','トイレいってくる','といれいってくる','お花摘み','おはなつみ','花摘み','個室','こしつ','lavatory','Lavatory','bathroom','Bathroom','トイレいきたい','トイレ我慢','トイレがまん','用を足す','ようをたす','洗面所','せんめんじょ','toilet','Toilet'], minStage:'baby', pausesIdle:false,
