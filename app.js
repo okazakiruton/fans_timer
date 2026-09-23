@@ -182,7 +182,7 @@ const REACTIONS = [
     play: async ()=>{ await flashEffect(['effect_heart'], 3, currentStage==='adult' ? 'eye_heart' : null); } },
   { id:'gan', label:'ガーン', keywords:['きもい','キモイ','気持ち悪い','うざい','ウザイ','うっとうしい','つまらない','つまんない','しょぼい','ショボい','bad','Bad','BAD','ひどい','ヒドイ','酷い','微妙','びみょう','ビミョー','げんなり','うわぁ','うわあ','ドン引き','どんびき','さむい','サムい','寒い','いたい','イタイ','痛い','きつい','キツイ','がっかり','ガッカリ'], minStage:'egg',
     play: async ()=>{ await flashEffect(['effect_bad'], 3); } },
-  { id:'angry', label:'怒り', keywords:['怒った','おこった','怒ったよ','なんでだよ','なんでだ','許さん','許さない','ふざけんな','ふざけるな','マジ怒','マジで怒った','ぷんぷん','プンプン','むかつく','ムカつく','バウム','はらたつ','イライラ','いらいら','キレた','きれた','切れた','激怒','げきど','おこだよ','おこだぞ','おこだ','おこりんぼ','グヌヌ','ぐぬぬ','怒り心頭','バウムクーヘン','頭に来た','あたまにきた','ふざけないで','ふざけないでよ','あんまりだ','ひどすぎる','許せない','ゆるせない','我慢の限界','ばうむ','angry','Angry','mad','Mad','カンカン','かんかん','ぶちギレ','ぶちぎれ'], minStage:'egg',
+  { id:'angry', label:'怒り', keywords:['怒った','おこった','怒ったよ','なんでだよ','なんでだ','許さん','許さない','ふざけんな','ふざけるな','マジ怒','マジで怒った','ぷんぷん','プンプン','むかつく','ムカつく','腹立つ','はらたつ','イライラ','いらいら','キレた','きれた','切れた','激怒','げきど','おこだよ','おこだぞ','おこだ','おこりんぼ','グヌヌ','ぐぬぬ','怒り心頭','おこりしんとう','頭に来た','あたまにきた','ふざけないで','ふざけないでよ','あんまりだ','ひどすぎる','許せない','ゆるせない','我慢の限界','がまんのげんかい','angry','Angry','mad','Mad','カンカン','かんかん','ぶちギレ','ぶちぎれ'], minStage:'egg',
     play: async ()=>{
       playSideObject(['baum'], 780); // fires alongside the flash below, same slot as drink/ebi/wc
       await flashEffect(['effect_angry'], 3);
@@ -537,16 +537,19 @@ let reconnectTimeoutId = null;
 let reconnectAttempts = 0;
 let currentChannel = null;
 
-document.getElementById('connectBtn').addEventListener('click', ()=>{
+document.getElementById('connectBtn').addEventListener('click', connectFromInput);
+
+function connectFromInput(){
   const channel = document.getElementById('channelInput').value.trim().replace(/^#/,'').toLowerCase();
   if(!channel){ setStatus('チャンネル名を入力してください（例: twitch.tv/あなたの名前 の「あなたの名前」の部分）', 'err'); return; }
+  if(ws && ws.readyState === 1 && currentChannel === channel){ return; } // already connected to this channel
   currentChannel = channel;
   manualDisconnect = false;
   reconnectAttempts = 0;
   clearTimeout(reconnectTimeoutId);
   saveSettings();
   connectTwitch(channel);
-});
+}
 
 function connectTwitch(channel){
   if(ws){ try{ ws.close(); }catch(e){} clearInterval(pingIntervalId); }
@@ -760,6 +763,7 @@ document.getElementById('timerStartBtn').addEventListener('click', ()=>{
   const mins = validateMinutesInput();
   if(mins === null) return;
   startBreakTimer(mins);
+  connectFromInput();
 });
 document.getElementById('timerMinutes').addEventListener('input', validateMinutesInput);
 
